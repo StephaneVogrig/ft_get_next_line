@@ -1,7 +1,11 @@
+
+# include "get_next_line.h"
+
 int main(void)
 {
 	int	fd;
 
-	fd =
-	get_next_line(	
+	fd = 0;
+	get_next_line(fd);	
+
 }
