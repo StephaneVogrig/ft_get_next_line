@@ -1,69 +1,58 @@
-ii#include "get_next_line.h"
+#include "get_next_line.h"
+#include <string.h>
+
+char *join(char *line, char *buffer, size_t len)
+{
+	char	*new_line;
+	size_t	i;
+
+	i = 0;
+	if (line)
+		while (line[i])
+			i++;
+	new_line = malloc(i + len);
+	if (!new_line)
+		return (NULL);
+	if (line)
+		memcpy(new_line, line, i - 1);
+	memcpy(new_line + i, buffer, len);
+	new_line[i + len] = '\0';
+	return (new_line);
+}
 
 char	*get_next_line(int fd)
 {
+	static char		buffer[BUFFER_SIZE];
+	static ssize_t	offset = -1;
+	static ssize_t	size_read;
+	ssize_t			start;
+	char			*line;
 
-//	si buffer vide 
-//		remplir buffer
-//	chercher endline dans buffer a partir de precedente position
-//	si endline pas trouve et pas fin de fichier
-//		sauvegarder buffer
-//		remplir buffer
-//		recommencer chercher endline dans buffer
-//	si endline pas trouve et fin de fichier dans buffer
-//		construire ligne jusqu'a fin de fichier
-//		effacer buffers sauvegarde
-//		detruire buffer
-//	si endline trouve
-//		construire ligne jusqu'a endline trouve
-//		effacer buffers sauvegarde
-//		memoriser buffer actuel et position endline trouve
-// renvoyer endline
-	char		*line;
-	int			len_line;
-	static char	*buffer;
-	ssize_t		size_read;
-	char		*endl_found;
+	if (fd < 0)
+		return (NULL);
 
-	line = NULL;
-	len_line = 0;
-	endl_found = NULL;
-	size_read = 0;
-
-	if (buffer == NULL)
+	if (offset == -1)
 	{
-		buffer = malloc(BUFFER_SIZE);
-		if (!buffer)
-			return (NULL);
 		size_read = read(fd, buffer, BUFFER_SIZE);
 		if (size_read == -1)
-		{
-			free(buffer);
-			buffer = NULL;
 			return (NULL);
-		}
+		offset = 0;
 	}
 
-	static int offset;
-
-	while (endl_found == NULL)
-	{	
-		endl_found = memchr(buffer + offset, '\n', size_read - offset);
-		if (!endl_found)
+	line = NULL;
+	while (size_read)
+	{
+		start = offset;
+		while (offset < size_read)
 		{
-			if (size_read < BUFFER_SIZE);
-			{
-				endl_found = buffer + size_read;
-				offset = 0;
-				break;
-			}
-			new_size_read = read(fd, buffer, BUFFER_SIZE);
-			if (new_size_read == -1)
-				return (NULL);
-			if (new_size_read == 0)
-				endl_found = 
+			if (buffer[offset++] == '\n')
+				return (join(line, buffer + start, offset - start));
 		}
+		line = join (line, buffer + start, offset - start);
+		size_read = read(fd, buffer, BUFFER_SIZE);
+		if (size_read == -1)
+			return (NULL);
+		offset = 0;
 	}
-
 	return (line);
 }
