@@ -36,9 +36,3 @@ char	*gnl_join(char *line, char *buffer, size_t len)
 	new_line[i + len] = '\0';
 	return (new_line);
 }
-char	*gnl_free(char *line)
-{
-	if (line)
-		free(line);
-	return (NULL);
-}

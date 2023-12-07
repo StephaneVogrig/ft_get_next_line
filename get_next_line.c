@@ -8,7 +8,7 @@ char	*get_next_line(int fd)
 	ssize_t			start;
 	char			*line;
 
-	if (fd < 0)
+	if (fd < 0 || fd > 1024)
 		return (NULL);
 	line = NULL;
 	while (size_read)
@@ -20,8 +20,10 @@ char	*get_next_line(int fd)
 		if (size_read > -1 && start < offset)
 			line = gnl_join (line, buffer + start, offset - start);
 		size_read = read(fd, buffer, BUFFER_SIZE);
+		if (size_read == -1 && line)
+			free(line);
 		if (size_read == -1)
-			return (gnl_free(line));
+			return (NULL);
 		offset = 0;
 	}
 	return (line);
