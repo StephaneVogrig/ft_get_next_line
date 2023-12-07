@@ -3,8 +3,9 @@
 while true; do
 	clear
 
-	cc -Wall -Wextra -Werror *.c -o gnl
+	if cc -Wall -Wextra -Werror -g *.c -o gnl; then
 	./gnl
+	fi
 
-	sleep 5  
+	sleep 2  
 done

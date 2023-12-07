@@ -9,12 +9,14 @@ int main(void)
 	char *line = NULL;
 
 	//fd = -1;
-	fd = open("text", O_RDONLY);
-	while (i < 4)
+	//fd = open("text", O_RDONLY);
+	fd = 0;
+	line = get_next_line(fd);
+	while (line)
 	{
-		line = get_next_line(fd);
 		printf("%s", line);
 		free(line);
+		line = get_next_line(fd);
 		i++;
 	}	
 	return (0);
