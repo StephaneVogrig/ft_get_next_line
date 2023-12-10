@@ -1,16 +1,16 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stephane <stephane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 15:08:50 by stephane          #+#    #+#             */
-/*   Updated: 2023/12/10 04:56:02 by stephane         ###   ########.fr       */
+/*   Updated: 2023/12/10 03:51:32 by stephane         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static void	gnl_clean_buffer(char *buffer, int len_use)
 {
@@ -29,23 +29,6 @@ static void	gnl_clean_buffer(char *buffer, int len_use)
 	*buffer = '\0';
 }
 
-static char	*gnl_free(t_gnl *save)
-{
-	t_gnl	*temp;
-
-	if (!save)
-		return (NULL);
-	while (save)
-	{
-		temp = save->next;
-		if (save->str)
-			free(save->str);
-		free(save);
-		save = temp;
-	}
-	return (NULL);
-}
-
 static char	*gnl_build_line(t_gnl *save, int len_saved, char *buffer, int len_use)
 {
 	char	*line;
@@ -60,7 +43,7 @@ static char	*gnl_build_line(t_gnl *save, int len_saved, char *buffer, int len_us
 		return(gnl_free(save));	
 	line[i] = '\0';
 	gnl_memcpy(line + len_saved, buffer, len_use);
-		while (save)
+	while (save)
 	{
 		temp = save->next;
 		len_saved -= save->len;
@@ -78,8 +61,8 @@ static int	gnl_save(char *buffer, t_gnl **save, int *len_saved)
 	t_gnl	*new;
 	int		len;
 	
-	if (!*buffer)
-		return (1);
+	if (!buffer || !*buffer)
+		return(1);
 	new = malloc(sizeof(t_gnl));
 	if(!new)
 		return (0);
@@ -97,9 +80,30 @@ static int	gnl_save(char *buffer, t_gnl **save, int *len_saved)
 	return (1);
 }
 
+static int	gnl_read(int fd, char **buffer)
+{
+	int	size_read;
+	
+	if (!buffer[fd])
+	{
+		buffer[fd] = malloc(BUFFER_SIZE);
+		if (!buffer[fd])
+			return (-1);
+	}
+	size_read = read(fd, buffer[fd], BUFFER_SIZE);
+	if (0 <= size_read && size_read < BUFFER_SIZE)
+		buffer[fd][size_read] = '\0';
+	if (size_read < 1)
+	{
+		free(buffer[fd]);
+		buffer[fd] = NULL;
+	}
+	return (size_read);
+}
+
 char *get_next_line(int fd)
 {
-	static char	buffer[BUFFER_SIZE];
+	static char	*buffer[MAX_FD];
 	t_gnl		*save;
 	int			len_save;
 	int			size_read;
@@ -112,16 +116,14 @@ char *get_next_line(int fd)
 	size_read = -1;
 	while (size_read)
 	{
-		offset = gnl_memchr(buffer, '\n', BUFFER_SIZE);
+		offset = gnl_memchr(buffer[fd], '\n', BUFFER_SIZE);
 		if(offset >= 0)
-			return(gnl_build_line(save, len_save, buffer, offset + 1));
-		if(!gnl_save(buffer, &save, &len_save))
+			return(gnl_build_line(save, len_save, buffer[fd], offset + 1));
+		if(!gnl_save(buffer[fd], &save, &len_save))
 			return(gnl_free(save));
-		size_read = read(fd, buffer, BUFFER_SIZE);
-		if (0 <= size_read && size_read < BUFFER_SIZE)
-			buffer[size_read] = '\0';
+		size_read = gnl_read(fd, buffer);
 		if (size_read == -1)
 			return (gnl_free(save));
 	}
-	return (gnl_build_line(save, len_save, buffer, 0));
+	return (gnl_build_line(save, len_save, buffer[fd], 0));
 }

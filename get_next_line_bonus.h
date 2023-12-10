@@ -1,12 +1,12 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stephane <stephane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 15:08:46 by stephane          #+#    #+#             */
-/*   Updated: 2023/12/10 04:18:07 by stephane         ###   ########.fr       */
+/*   Updated: 2023/12/10 03:30:37 by stephane         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -17,7 +17,7 @@
 # include <unistd.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 200
+#  define BUFFER_SIZE 1
 # endif
 
 # ifndef MAX_FD
@@ -30,8 +30,8 @@ typedef struct s_gnl {
 	struct s_gnl	*next;
 } t_gnl;
 
-char *get_next_line(int fd);
+char 	*get_next_line(int fd);
 void	gnl_memcpy(char *dest, char *src, int n);
 int		gnl_memchr(char *buffer, char c, int n);
-
+char	*gnl_free(t_gnl *save);
 #endif
