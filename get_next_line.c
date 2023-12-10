@@ -1,30 +1,42 @@
+/******************************************************************************/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: stephane <stephane@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/07 23:34:58 by stephane          #+#    #+#             */
+/*   Updated: 2023/12/08 00:25:55 by stephane         ###   ########.fr       */
+/*                                                                            */
+/******************************************************************************/
+
 #include "get_next_line.h"
 
 char	*get_next_line(int fd)
 {
-	static char		buffer[BUFFER_SIZE];
-	static ssize_t	offset = 0;
-	static ssize_t	size_read = -1;
+	static t_buffer	b;
+	t_save			*save;
 	ssize_t			start;
-	char			*line;
+	int				len;
 
 	if (fd < 0 || fd > 1024)
 		return (NULL);
-	line = NULL;
-	while (size_read)
+	save = NULL;
+	len = 0;
+	if (!b.init)
+		b.size_used = -1;
+	while (b.size_used)
 	{
-		start = offset;
-		while (offset < size_read)
-			if (buffer[offset++] == '\n')
-				return (gnl_join(line, buffer + start, offset - start));
-		if (size_read > -1 && start < offset)
-			line = gnl_join (line, buffer + start, offset - start);
-		size_read = read(fd, buffer, BUFFER_SIZE);
-		if (size_read == -1 && line)
-			free(line);
-		if (size_read == -1)
-			return (NULL);
-		offset = 0;
+		start = b.offset;
+		while (b.offset < b.size_used)
+			if (b.buffer[b.offset++] == '\n')
+				return (gnl_line(save, len, &b, start));
+		if (!gnl_save(&save, &len, &b, start))
+			return (gnl_free(save));
+		b.size_used = read(fd, b.buffer, BUFFER_SIZE);
+		if (b.size_used == -1)
+			return(gnl_free(save)) ;
+		b.offset = 0;
 	}
-	return (line);
+	return (gnl_line(save, len, &b, 0));
 }
