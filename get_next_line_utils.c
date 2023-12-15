@@ -1,16 +1,5 @@
 #include "get_next_line.h"
 
-void	gnl_copy(char *dest, char *src, size_t len)
-{
-	while (len)
-	{
-		*dest = *src;
-		dest++;
-		src++;
-		len--;
-	}
-}
-
 char	*gnl_join(char *line, char *buffer, size_t len)
 {
 	char	*new_line;
@@ -28,11 +17,11 @@ char	*gnl_join(char *line, char *buffer, size_t len)
 		return (NULL);
 	}
 	new_line[i + len] = '\0';
+	while (len--)
+		new_line[i + len] = buffer[len];
+	while (i--)
+		new_line[i] = line[i];
 	if (line)
-	{
-		gnl_copy(new_line, line, i);
 		free(line);
-	}
-	gnl_copy(new_line + i, buffer, len);
 	return (new_line);
 }
