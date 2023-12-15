@@ -27,12 +27,12 @@ char	*gnl_join(char *line, char *buffer, size_t len)
 			free(line);
 		return (NULL);
 	}
+	new_line[i + len] = '\0';
 	if (line)
 	{
 		gnl_copy(new_line, line, i);
 		free(line);
 	}
 	gnl_copy(new_line + i, buffer, len);
-	new_line[i + len] = '\0';
 	return (new_line);
 }
