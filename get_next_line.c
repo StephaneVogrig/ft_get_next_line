@@ -1,30 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: svogrig <svogrig@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/15 21:50:48 by svogrig           #+#    #+#             */
+/*   Updated: 2023/12/15 21:50:53 by svogrig          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 char	*get_next_line(int fd)
 {
-	static char		buffer[BUFFER_SIZE];
-	static ssize_t	offset = 0;
+	static t_buffer	buffer;
 	static ssize_t	size_read = -1;
 	ssize_t			start;
 	char			*line;
 
-	if (fd < 0 || fd > 1024)
+	if (fd < 0 || fd > 1024 || BUFFER_SIZE < 1)
 		return (NULL);
 	line = NULL;
 	while (size_read)
 	{
-		start = offset;
-		while (offset < size_read)
-			if (buffer[offset++] == '\n')
-				return (gnl_join(line, buffer + start, offset - start));
-		if (size_read > -1 && start < offset)
-			line = gnl_join (line, buffer + start, offset - start);
-		size_read = read(fd, buffer, BUFFER_SIZE);
+		start = buffer.i;
+		while (buffer.i < size_read)
+			if (buffer.data[buffer.i++] == '\n')
+				return (gnl_join(line, buffer.data + start, buffer.i - start));
+		if (size_read > -1 && start < buffer.i)
+			line = gnl_join (line, buffer.data + start, buffer.i - start);
+		size_read = read(fd, buffer.data, BUFFER_SIZE);
+		buffer.i = 0;
 		if (size_read == -1 && line)
 			free(line);
 		if (size_read == -1)
 			return (NULL);
-		offset = 0;
 	}
+	size_read = -1;
 	return (line);
 }
