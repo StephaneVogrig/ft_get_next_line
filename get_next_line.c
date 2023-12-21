@@ -6,7 +6,7 @@
 /*   By: svogrig <svogrig@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/15 21:50:48 by svogrig           #+#    #+#             */
-/*   Updated: 2023/12/15 21:50:53 by svogrig          ###   ########.fr       */
+/*   Updated: 2023/12/17 11:21:20 by svogrig          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ char	*get_next_line(int fd)
 	ssize_t			start;
 	char			*line;
 
-	if (fd < 0 || fd > 1024 || BUFFER_SIZE < 1)
-		return (NULL);
+	//if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE < 1)
+	//	return (NULL);
 	line = NULL;
 	while (size_read)
 	{

@@ -6,7 +6,7 @@
 /*   By: svogrig <svogrig@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/15 21:50:59 by svogrig           #+#    #+#             */
-/*   Updated: 2023/12/15 21:51:01 by svogrig          ###   ########.fr       */
+/*   Updated: 2023/12/17 11:18:10 by svogrig          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 10000000
+# endif
+
+# ifndef MAX_FD
+#  define MAX_FD 1024
 # endif
 
 # define FALSE 0
