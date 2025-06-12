@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stephane <stephane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: svogrig <svogrig@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 15:08:46 by stephane          #+#    #+#             */
-/*   Updated: 2023/12/10 04:18:07 by stephane         ###   ########.fr       */
+/*   Updated: 2023/12/11 17:48:37 by svogrig          ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
@@ -28,9 +28,9 @@ typedef struct s_gnl {
 	char			*str;
 	int				len;
 	struct s_gnl	*next;
-} t_gnl;
+}	t_gnl;
 
-char *get_next_line(int fd);
+char	*get_next_line(int fd);
 void	gnl_memcpy(char *dest, char *src, int n);
 int		gnl_memchr(char *buffer, char c, int n);
 
